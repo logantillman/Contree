@@ -4,6 +4,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 
 import summaryRoutes from './routes/summaryRoutes.js';
+import plaidRoutes from './routes/plaidRoutes.js'
 import dotenv from 'dotenv';
 
 dotenv.config({ path: './config.env' });
@@ -18,6 +19,7 @@ const PORT = process.env.PORT || 3001;
 
 // app.use('/categorize', );
 app.use('/summary', summaryRoutes);
+app.use('/plaid', plaidRoutes);
 
 mongoose.set('strictQuery', true);
 await mongoose.connect(DB_URL, { useNewUrlParser: true })
