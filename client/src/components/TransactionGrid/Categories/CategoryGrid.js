@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -7,7 +7,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import TextField from '@mui/material/TextField';
 
-const CategoryGrid = () => {
+const CategoryGrid = (props) => {
     const [open, setOpen] = useState(false);
     const [categories, setCategories] = useState([]);
     const [categoryName, setCategoryName] = useState(null);
@@ -21,26 +21,38 @@ const CategoryGrid = () => {
     };
 
     const handleCreate = (categoryName) => {
-        console.log(categoryName);
         if (categoryName) {
             createCategory(categoryName);
         }
     }
 
-    const newCategory = (categoryName) => {
-        return <Button variant="contained" key={categories.length} data-category={categoryName}>{categoryName}</Button>
+    const newCategory = (categoryName, prevState) => {
+        if (!props.categories.includes(categoryName)) {
+            props.createCategoryFunction(categoryName);
+        }
+        return <Button variant="contained" key={prevState.length} onClick={() => props.setCategoryFunction(categoryName)}>{categoryName}</Button>
     }
 
     const createCategory = (categoryName) => {
         if (categories.length < 10) {
-            setCategories(categories.concat(newCategory(categoryName)));
+            setCategories(prevState => {
+                return [...prevState, newCategory(categoryName, prevState)];
+            });
         }
         setCategoryName(null);
         handleClose();
     }
 
+    useEffect(() => {
+        setCategories([]);
+        props.categories.forEach(category => {
+            createCategory(category);
+        });
+    }, [])
+
     return (
         <div>
+            {categories}
             <Button variant="contained" onClick={handleClickOpen}>+ New Category</Button>
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>Create category</DialogTitle>
@@ -67,7 +79,6 @@ const CategoryGrid = () => {
                     <Button onClick={() => handleCreate(categoryName)}>Create</Button>
                 </DialogActions>
             </Dialog>
-            {categories}
         </div>
     );
 }
