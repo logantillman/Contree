@@ -16,28 +16,13 @@ const configuration = new Configuration({
 
 const client = new PlaidApi(configuration);
 
-export const createUser = async(req, res) => {
-    const userInfo = req.body;
-    const user = new User(userInfo);
-
-    try {
-        await user.save();
-
-        res.status(200).json({ message: "User created" });
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-}
-
 export const createLinkToken = async(req, res) => {
-    const id = req.params.id;
 
-    const user = await User.findById(id);
-    const clientUserId = user._id;
+    const clientUserId = req.user.id;
     const request = {
         user: {
-        // This should correspond to a unique id for the current user.
-        client_user_id: clientUserId,
+          // This should correspond to a unique id for the current user.
+          client_user_id: clientUserId,
         },
         client_name: 'Plaid Test App',
         products: ['auth'],
@@ -47,8 +32,6 @@ export const createLinkToken = async(req, res) => {
     try {
         const createTokenResponse = await client.linkTokenCreate(request);
         res.status(200).json({ data: createTokenResponse.data });
-
-        // res.status(200).json({ meesage: "Temporary success"});
     } catch (error) {
         console.log(error.message);
         res.status(400).json({ message: "Error creating link token" });
@@ -57,7 +40,7 @@ export const createLinkToken = async(req, res) => {
 
 export const exchangePublicToken = async(req, res, next) => {
     const publicToken = req.body.public_token;
-    const id = req.params.id;
+    const id = req.user.id;
 
     try {
         const response = await client.itemPublicTokenExchange({
@@ -70,7 +53,6 @@ export const exchangePublicToken = async(req, res, next) => {
         const user = await User.findById(id);
         console.log("found user - ", user.email);
 
-        user.email = user.email;
         user.token = accessToken;
         user.itemID = itemID;
         
@@ -84,7 +66,7 @@ export const exchangePublicToken = async(req, res, next) => {
 }
 
 export const getTransactions = async(req, res) => {
-    const id = req.params.id;
+    const id = req.user.id;
     const startDate = req.query.startDate;
     const endDate = req.query.endDate;
 
@@ -95,7 +77,6 @@ export const getTransactions = async(req, res) => {
             start_date: startDate,
             end_date: endDate
         };
-        
         const response = await client.transactionsGet(request);
         let transactions = response.data.transactions;
         const total_transactions = response.data.total_transactions;
