@@ -3,8 +3,9 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import mongoose from 'mongoose';
 
+import { registerUser, loginUser, verifyJWT } from './controllers/auth.js';
 import summaryRoutes from './routes/summaryRoutes.js';
-import plaidRoutes from './routes/plaidRoutes.js'
+import plaidRoutes from './routes/plaidRoutes.js';
 import dotenv from 'dotenv';
 
 dotenv.config({ path: './config.env' });
@@ -17,9 +18,11 @@ app.use(cors());
 const DB_URL = process.env.DB_URL;
 const PORT = process.env.PORT || 3001;
 
-// app.use('/categorize', );
-app.use('/summary', summaryRoutes);
-app.use('/plaid', plaidRoutes);
+app.post('/register', registerUser);
+app.post('/login', loginUser);
+
+app.use('/summary', verifyJWT, summaryRoutes);
+app.use('/plaid', verifyJWT, plaidRoutes);
 
 mongoose.set('strictQuery', true);
 await mongoose.connect(DB_URL, { useNewUrlParser: true })
