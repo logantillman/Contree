@@ -59,24 +59,16 @@ export const loginUser = async(req, res) => {
     })
 }
 
-export const verifyJWT = async(req, res, next) => {
-    const token = req.headers["authorization"]?.split(' ')[1];
-
-    if (token) {
-        jwt.verify(token, process.env.PASSPORTSECRET, (error, decoded) => {
-            if (error) return res.status(400).json({
-                isLoggedIn: false,
-                message: "Failed to authenticate"
-            });
-            req.user = {};
-            req.user.id = decoded.id;
-            req.user.email = decoded.email;
-            next();
-        });
-    } else {
-        res.status(400).json({
-            isLoggedIn: false,
-            message: "Incorrect token given"
-        });
+export const logoutUser = (req, res) => {
+    const cookies = req.cookies;
+    if (!cookies?.jwt) {
+        return res.sendStatus(204);
     }
+
+    res.clearCookie('jwt', {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None",
+    })
+    res.json({ message: "Cookie cleared" });
 }
