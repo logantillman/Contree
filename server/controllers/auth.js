@@ -26,36 +26,82 @@ export const registerUser = async(req, res) => {
 }
 
 export const loginUser = async(req, res) => {
-    const user = req.body;
+    const email = req.body.email;
+    const password = req.body.password;
 
-    User.findOne({ email: user.email })
-    .then(userFound => {
-        if (!userFound) {
-            return res.status(400).json({ message: "Invalid email or password" });
+    if (!email || !password) {
+        return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const foundUser = await User.findOne({ email: email });
+
+    if (!foundUser) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const match = await bcrypt.compare(password, foundUser.password)
+
+    if (!match) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const accessToken = jwt.sign(
+        {
+            id: foundUser._id,
+            email: foundUser.email
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: "15m" }
+    );
+
+    const refreshToken = jwt.sign(
+        { email: foundUser.email },
+        process.env.REFRESH_SECRET,
+        { expiresIn: "1d" }
+    );
+
+    res.cookie("jwt", refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None",
+        maxAge: 7 * 24 * 60 * 60 * 1000 // matches refreshToken
+    });
+
+    res.json({ accessToken });
+}
+
+export const refresh = (req, res) => {
+    const cookies = req.cookies;
+
+    if (!cookies?.jwt) {
+        console.log("no jwt cookie found");
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const refreshToken = cookies.jwt;
+
+    jwt.verify(refreshToken, process.env.REFRESH_SECRET, async(error, decoded) => {
+        if (error) {
+            return res.status(400).json({ message: "Failed to authenticate" });
         }
-        bcrypt.compare(user.password, userFound.password)
-        .then(usersMatch => {
-            if (usersMatch) {
-                const payload = {
-                    id: userFound._id,
-                    email: userFound.email
-                }
-                jwt.sign(
-                    payload,
-                    process.env.JWT_SECRET,
-                    { expiresIn: 86400 },
-                    (error, token) => {
-                        if (error) return res.status(400).json({ message: error.message });
-                        return res.status(200).json({
-                            message: "Success logging in",
-                            token: "Bearer " + token
-                        })
-                    }
-                )
-            } else {
-                return res.status(400).json({ message: "Invalid email or password" });
-            }
-        })
+
+        const foundUser = await User.findOne({ email: decoded.email });
+
+        if (!foundUser) {
+            console.log("didn't find user when refreshing");
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+
+        const accessToken = jwt.sign(
+            {
+                id: foundUser._id,
+                email: foundUser.email
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: "15m" }
+        );
+
+        res.json({ accessToken });
     })
 }
 
