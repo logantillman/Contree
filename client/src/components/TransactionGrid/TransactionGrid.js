@@ -15,15 +15,16 @@ const transactions = [
   }
 ]
 
-let categories = ['Food', 'Tech', 'Income', 'Random'];
 const summary = {};
 
 const TransactionGrid = () => {
 
+  const [categories, setCategories] = useState(['Default']);
   const [transaction, setTransaction] = useState({});
   const [index, setIndex] = useState(0);
   const [category, setCategory] = useState(null);
 
+  // TODO refactor transaction classification
   useEffect(() => {   
     if (!category) return;
 
@@ -52,19 +53,22 @@ const TransactionGrid = () => {
     setIndex(index + 1);
   }
 
+  // TODO refactor here 
   const onCategoryClick = (categoryName) => {
     setCategory(categoryName);
   }
 
-  const onCategoryCreate = (categoryName) => {
-    categories.push(categoryName);
+  const addCategory = (category) => {
+    setCategories(prevState => {
+      return [...prevState, category];
+    });
   }
 
   return (
     <div>
       <Button variant="contained" onClick={nextTransaction}>next transaction</Button>
       <Transaction transaction={transaction}/>
-      <CategoryGrid setCategoryFunction={onCategoryClick} categories={categories} createCategoryFunction={onCategoryCreate}/>
+      <CategoryGrid setCategoryFunction={onCategoryClick} categories={categories} addCategory={addCategory} />
     </div>
   );
 }

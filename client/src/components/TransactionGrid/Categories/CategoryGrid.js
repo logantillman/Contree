@@ -9,7 +9,6 @@ import TextField from '@mui/material/TextField';
 
 const CategoryGrid = (props) => {
     const [open, setOpen] = useState(false);
-    const [categories, setCategories] = useState([]);
     const [categoryName, setCategoryName] = useState(null);
 
     const handleClickOpen = () => {
@@ -20,39 +19,23 @@ const CategoryGrid = (props) => {
       setOpen(false);
     };
 
-    const handleCreate = (categoryName) => {
-        if (categoryName) {
-            createCategory(categoryName);
-        }
-    }
-
-    const newCategory = (categoryName, prevState) => {
-        if (!props.categories.includes(categoryName)) {
-            props.createCategoryFunction(categoryName);
-        }
-        return <Button variant="contained" key={prevState.length} onClick={() => props.setCategoryFunction(categoryName)}>{categoryName}</Button>
+    const createButton = (categoryName, index) => {
+        return <Button variant="contained" key={index} onClick={() => props.setCategoryFunction(categoryName)}>{categoryName}</Button>
     }
 
     const createCategory = (categoryName) => {
-        if (categories.length < 10) {
-            setCategories(prevState => {
-                return [...prevState, newCategory(categoryName, prevState)];
-            });
+        if (categoryName) {
+            props.addCategory(categoryName);
+            setCategoryName(null);
+            handleClose();
         }
-        setCategoryName(null);
-        handleClose();
     }
 
-    useEffect(() => {
-        setCategories([]);
-        props.categories.forEach(category => {
-            createCategory(category);
-        });
-    }, [])
+    const categoryButtons = props.categories.map((category, index) => createButton(category, index));
 
     return (
         <div>
-            {categories}
+            {categoryButtons}
             <Button variant="contained" onClick={handleClickOpen}>+ New Category</Button>
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>Create category</DialogTitle>
@@ -69,14 +52,14 @@ const CategoryGrid = (props) => {
                         onChange={(event) => {setCategoryName(event.target.value)}}
                         onKeyUp={(event) => {
                             if (event.key === 'Enter') {
-                                handleCreate(categoryName);
+                                createCategory(categoryName);
                             }
                         }}
                     />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={() => handleCreate(categoryName)}>Create</Button>
+                    <Button onClick={() => createCategory(categoryName)}>Create</Button>
                 </DialogActions>
             </Dialog>
         </div>
