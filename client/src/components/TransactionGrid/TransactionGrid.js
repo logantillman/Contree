@@ -4,7 +4,7 @@ import CategoryGrid from './Categories/CategoryGrid';
 import Transaction from './Transaction/Transaction';
 import Button from '@mui/material/Button';
 
-const transactions = [
+const loadedTransactions = [
   {
     "amount": 2307.21,
     "name": "Apple Store",
@@ -15,47 +15,36 @@ const transactions = [
   }
 ]
 
+const loadedCategories = ["Food", "Tech", "Cars"];
+
+const reversedTransactions = loadedTransactions.reverse();
+
 const summary = {};
 
 const TransactionGrid = () => {
-
-  const [categories, setCategories] = useState(['Default']);
+  const [categories, setCategories] = useState([]);
   const [transaction, setTransaction] = useState({});
-  const [index, setIndex] = useState(0);
-  const [category, setCategory] = useState(null);
-
-  // TODO refactor transaction classification
-  useEffect(() => {   
-    if (!category) return;
-
-    if (!(category in summary)) {
-      summary[category] = 0;
-    }
-
-    summary[category] += transaction.amount;
-
-    setCategory(null);
-    nextTransaction();
-  }, [category]);
-
+  
+  // Set these on load
   useEffect(() => {
-    if (index >= transactions.length) {
-      console.log("Maybe do some routing here");
-      console.log('c', categories);
-      console.log('s', summary);
-      setTransaction({});
-    } else {
-      setTransaction(transactions[index]);
+    loadedCategories.forEach(category => summary[category] = 0);
+    setCategories(loadedCategories);
+    setTransaction(reversedTransactions.pop());
+    return () => {
+      console.log('cleaning up');
     }
-  }, [index]);
+  }, []);
 
-  const nextTransaction = () => {
-    setIndex(index + 1);
-  }
-
-  // TODO refactor here 
   const onCategoryClick = (categoryName) => {
-    setCategory(categoryName);
+    summary[categoryName] = Object.hasOwn(summary, categoryName) ? summary[categoryName] + transaction.amount : transaction.amount;
+
+    if (reversedTransactions.length !== 0) {
+      setTransaction(reversedTransactions.pop());
+    } else {
+      // Process is finished
+      console.log(summary);
+      setTransaction({});
+    }
   }
 
   const addCategory = (category) => {
@@ -65,11 +54,10 @@ const TransactionGrid = () => {
   }
 
   return (
-    <div>
-      <Button variant="contained" onClick={nextTransaction}>next transaction</Button>
+    <>
       <Transaction transaction={transaction}/>
       <CategoryGrid setCategoryFunction={onCategoryClick} categories={categories} addCategory={addCategory} />
-    </div>
+    </>
   );
 }
 
