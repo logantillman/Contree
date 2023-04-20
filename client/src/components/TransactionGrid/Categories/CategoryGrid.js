@@ -34,7 +34,7 @@ const CategoryGrid = (props) => {
     const categoryButtons = props.categories.map((category, index) => createButton(category, index));
 
     return (
-        <div>
+        <>
             {categoryButtons}
             <Button variant="contained" onClick={handleClickOpen}>+ New Category</Button>
             <Dialog open={open} onClose={handleClose}>
@@ -62,7 +62,7 @@ const CategoryGrid = (props) => {
                     <Button onClick={() => createCategory(categoryName)}>Create</Button>
                 </DialogActions>
             </Dialog>
-        </div>
+        </>
     );
 }
 
