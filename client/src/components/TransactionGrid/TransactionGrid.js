@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 
 import CategoryGrid from './Categories/CategoryGrid';
 import Transaction from './Transaction/Transaction';
-import Button from '@mui/material/Button';
 
 const loadedTransactions = [
   {
