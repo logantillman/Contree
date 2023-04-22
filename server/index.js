@@ -9,7 +9,6 @@ import authRoutes from './routes/authRoutes.js';
 import summaryRoutes from './routes/summaryRoutes.js';
 import plaidRoutes from './routes/plaidRoutes.js';
 import dotenv from 'dotenv';
-import cookieParser from 'cookie-parser';
 
 dotenv.config({ path: './config.env' });
 const app = express();
@@ -17,7 +16,7 @@ const app = express();
 app.use(cookies());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors());
+app.use(cors({ credentials: true, origin: 'http://localhost:3001' }));
 
 const DB_URL = process.env.DB_URL;
 const PORT = process.env.PORT || 3001;
