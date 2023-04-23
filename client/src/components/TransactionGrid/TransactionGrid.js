@@ -28,7 +28,7 @@ const TransactionGrid = () => {
   useEffect(() => {
     loadedCategories.forEach(category => summary[category] = 0);
     setCategories(loadedCategories);
-    setTransaction(reversedTransactions.pop());
+    setTransaction(reversedTransactions[reversedTransactions.length-1]);
     return () => {
       console.log('cleaning up');
     }
@@ -37,8 +37,9 @@ const TransactionGrid = () => {
   const onCategoryClick = (categoryName) => {
     summary[categoryName] = Object.hasOwn(summary, categoryName) ? summary[categoryName] + transaction.amount : transaction.amount;
 
+    reversedTransactions.pop();
     if (reversedTransactions.length !== 0) {
-      setTransaction(reversedTransactions.pop());
+      setTransaction(reversedTransactions[reversedTransactions.length-1]);
     } else {
       // Process is finished
       console.log(summary);
