@@ -11,22 +11,16 @@ const App = () => {
     const ref = useRef();
 
     const [token, setToken] = useState(null);
-    const [email, setEmail] = useState(null);
-    const [password, setPassword] = useState(null);
 
     const getAccessToken = useCallback(
         () => {
-            axios.post('http://localhost:3000/auth/refresh', {
-                "email": email,
-                "password": password
-            }, { withCredentials: true }).then(response => {
+            axios.get('http://localhost:3000/auth/refresh', { withCredentials: true }).then(response => {
                 if (response.data.accessToken)
                     setToken(response.data.accessToken);
                 else
                     console.log("error getting token");
             });
-        },
-        [email, password]
+        }, []
     );
 
     // Refresh access token every 14 minutes (expires in 15m)
@@ -43,8 +37,7 @@ const App = () => {
                 <Route path="/">
                     <Route index element={<Home />} />
                     <Route path="plaid" element={<Plaid />} />
-                    {/* setEmail and setPassword are temporary until I figure out best way to save them */}
-                    <Route path="login" element={<Login setToken={setToken} setemail={setEmail} setpassword={setPassword} />} />
+                    <Route path="login" element={<Login setToken={setToken} />} />
                     <Route path="logout" element={<Logout />} />
                     <Route path="categorize" element={<TransactionGrid />} />
                 </Route>
