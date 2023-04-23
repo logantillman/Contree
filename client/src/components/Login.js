@@ -8,14 +8,12 @@ const loginUser = async(credentials) => {
     }, { withCredentials: true });
 }
 
-const Login = ({ setToken, setemail, setpassword }) => {
+const Login = ({ setToken }) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
     const handleSubmit = async(event) => {
         event.preventDefault();
-        setemail(email);
-        setpassword(password);
         const response = await loginUser({
             email,
             password
