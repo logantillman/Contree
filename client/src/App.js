@@ -3,10 +3,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from './components/Home';
 import Plaid from './Plaid.tsx';
 import Login from './components/Login';
-import Logout from './components/Logout';
 import TransactionGrid from './components/TransactionGrid/TransactionGrid';
 import axios from 'axios';
 import NavBar from './components/NavBar';
+import { AuthContext } from './context/AuthContext';
+import RequireAuth from './components/RequireAuth';
 
 const App = () => {
     const ref = useRef();
@@ -38,17 +39,33 @@ const App = () => {
     }, [token, getAccessToken]);
 
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<NavBar />}>
-                    <Route index element={<Home />} />
-                    <Route path="plaid" element={<Plaid />} />
-                    <Route path="login" element={<Login setToken={setToken} />} />
-                    <Route path="logout" element={<Logout />} />
-                    <Route path="categorize" element={<TransactionGrid />} />
-                </Route>
-            </Routes>
-        </BrowserRouter>
+        <AuthContext.Provider value={[authenticated, setAuthenticated]}>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/" element={<NavBar setToken={setToken} />}>
+                        <Route index element={<Home />} />
+                        {/* TODO this plaid route probably shouldn't be a route... just a normal button */}
+                        <Route 
+                            path="plaid" 
+                            element={
+                                <RequireAuth>
+                                    <Plaid />
+                                </RequireAuth>
+                            } 
+                        /> 
+                        <Route path="login" element={<Login setToken={setToken} />} />
+                        <Route 
+                            path="categorize" 
+                            element={
+                                <RequireAuth>
+                                    <TransactionGrid />
+                                </RequireAuth>
+                            } 
+                        />
+                    </Route>
+                </Routes>
+            </BrowserRouter>
+        </AuthContext.Provider>
     )
 }
 

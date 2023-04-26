@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import axios from 'axios';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 
 const loginUser = async(credentials) => {
     return await axios.post('http://localhost:3000/auth/login', {
@@ -8,9 +10,13 @@ const loginUser = async(credentials) => {
     }, { withCredentials: true });
 }
 
-const Login = ({ setToken }) => {
+const Login = (props) => {
+    const [ , setAuthenticated] = useContext(AuthContext);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
+    const { state } = useLocation();
+    const navigate = useNavigate();
 
     const handleSubmit = async(event) => {
         event.preventDefault();
@@ -18,7 +24,9 @@ const Login = ({ setToken }) => {
             email,
             password
         });
-        setToken(response.data.accessToken);
+        props.setToken(response.data.accessToken);
+        setAuthenticated(true);
+        navigate(state?.path || "/");
     }
 
     return (
