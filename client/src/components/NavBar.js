@@ -1,7 +1,8 @@
 import { Button } from "@mui/material";
 import { Outlet, NavLink } from "react-router-dom";
+import Logout from "./Logout";
 
-const NavBar = () => {
+const NavBar = (props) => {
     return (
         <>
             <Button variant="contained">
@@ -13,9 +14,7 @@ const NavBar = () => {
             <Button variant="contained">
                 <NavLink to="/login">Login</NavLink>
             </Button>
-            <Button variant="contained">
-                <NavLink to="/logout">Logout</NavLink>
-            </Button>
+            <Logout setToken={props.setToken} />
             <Outlet />
         </>
     )
