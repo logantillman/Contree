@@ -6,20 +6,26 @@ import Login from './components/Login';
 import Logout from './components/Logout';
 import TransactionGrid from './components/TransactionGrid/TransactionGrid';
 import axios from 'axios';
+import NavBar from './components/NavBar';
 
 const App = () => {
     const ref = useRef();
 
     const [token, setToken] = useState(null);
+    const [authenticated, setAuthenticated] = useState(false);
 
     const getAccessToken = useCallback(
         () => {
-            axios.get('http://localhost:3000/auth/refresh', { withCredentials: true }).then(response => {
-                if (response.data.accessToken)
-                    setToken(response.data.accessToken);
-                else
-                    console.log("error getting token");
-            });
+            axios.get('http://localhost:3000/auth/refresh', { withCredentials: true })
+                .then(response => {
+                    if (response.data.accessToken) {
+                        setToken(response.data.accessToken);
+                        setAuthenticated(true);
+                    }
+                })
+                .catch(() => {
+                    setAuthenticated(false);
+                });
         }, []
     );
 
