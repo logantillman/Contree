@@ -1,5 +1,5 @@
 import { useRef, useEffect, useCallback, useState } from 'react';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Home from './components/Home';
 import Plaid from './Plaid.tsx';
 import Login from './components/Auth/Login';
@@ -43,6 +43,7 @@ const App = () => {
         <AuthContext.Provider value={[authenticated, setAuthenticated]}>
             <BrowserRouter>
                 <Routes>
+                    <Route path="/home" element={<Navigate to="/" />} />
                     <Route path="/" element={<NavBar setToken={setToken} />}>
                         <Route index element={<Home />} />
                         {/* TODO this plaid route probably shouldn't be a route... just a normal button */}
