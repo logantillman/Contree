@@ -2,7 +2,7 @@ import { Button } from "@mui/material";
 import axios from 'axios';
 import { useContext } from "react";
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 
 const logoutUser = async() => {
     return await axios.post('http://localhost:3000/auth/logout', { withCredentials: true });
@@ -20,7 +20,7 @@ const Logout = (props) => {
     }
  
     return (
-        <Button variant="contained" onClick={handleLogOut}>Logout</Button>
+        <Button key="logout" sx={{ my: 2, color: 'white', display: 'block' }} onClick={handleLogOut}>Logout</Button>
     )
 };
 

@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react';
 import axios from 'axios';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../context/AuthContext';
 
 const loginUser = async(credentials) => {
     return await axios.post('http://localhost:3000/auth/login', {
@@ -14,9 +14,9 @@ const Login = (props) => {
     const [ , setAuthenticated] = useContext(AuthContext);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
     const { state } = useLocation();
-    const navigate = useNavigate();
 
     const handleSubmit = async(event) => {
         event.preventDefault();
