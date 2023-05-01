@@ -2,12 +2,13 @@ import { useRef, useEffect, useCallback, useState } from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from './components/Home';
 import Plaid from './Plaid.tsx';
-import Login from './components/Login';
+import Login from './components/Auth/Login';
 import TransactionGrid from './components/TransactionGrid/TransactionGrid';
 import axios from 'axios';
 import NavBar from './components/NavBar';
 import { AuthContext } from './context/AuthContext';
 import RequireAuth from './components/RequireAuth';
+import Categorize from './components/Categorize';
 
 const App = () => {
     const ref = useRef();
@@ -58,7 +59,7 @@ const App = () => {
                             path="categorize" 
                             element={
                                 <RequireAuth>
-                                    <TransactionGrid />
+                                    <Categorize />
                                 </RequireAuth>
                             } 
                         />
