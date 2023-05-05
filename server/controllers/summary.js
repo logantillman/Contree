@@ -1,9 +1,15 @@
 import Summary from '../models/Summary.js';
 
 export const getSummary = async(req, res) => {
+    const year = req.query.year;
+
     try {
         const summaries = await Summary.find({
-            user: req.user.id
+            user: req.user.id,
+            date: {
+                $gte: new Date(year, 0),
+                $lt: new Date(parseInt(year) + 1, 0),
+            }
         });
 
         res.status(200).json(summaries);
@@ -28,12 +34,16 @@ export const getSummaryById = async(req, res) => {
     }
 };
 
+// TODO do some date error checking
 export const createSummary = async(req, res) => {
     const categories = req.body.categories;
+    const year = req.body.year;
+    const month = req.body.month;
 
     const summary = new Summary({
         user: req.user.id,
-        categories: categories
+        categories: categories,
+        date: new Date(year, month-1)
     });
     
     try {

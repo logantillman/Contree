@@ -5,9 +5,12 @@ const summarySchema = mongoose.Schema({
         type: String,
         required: true
     },
-    //TODO add date property
     categories: {
         type: Object,
+        required: true
+    },
+    date: {
+        type: Date,
         required: true
     }
 });
