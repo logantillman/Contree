@@ -41,7 +41,7 @@ const TransactionGrid = () => {
     if (reversedTransactions.length !== 0) {
       setTransaction(reversedTransactions[reversedTransactions.length-1]);
     } else {
-      // Process is finished
+      // TODO handle saving when process is finished
       console.log(summary);
       setTransaction({});
     }
