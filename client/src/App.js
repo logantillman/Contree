@@ -8,7 +8,7 @@ import axios from 'axios';
 import NavBar from './components/NavBar';
 import { AuthContext } from './context/AuthContext';
 import RequireAuth from './components/RequireAuth';
-import Categorize from './components/Categorize';
+import SummaryDetails from './components/SummaryDetails';
 
 const App = () => {
     const ref = useRef();
@@ -57,11 +57,19 @@ const App = () => {
                         /> 
                         <Route path="login" element={<Login setToken={setToken} />} />
                         <Route 
+                            path="summary" 
+                            element={
+                                // <RequireAuth>
+                                    <SummaryDetails token={token} />
+                                // </RequireAuth>
+                            } 
+                        />
+                        <Route 
                             path="categorize" 
                             element={
-                                <RequireAuth>
-                                    <Categorize />
-                                </RequireAuth>
+                                // <RequireAuth>
+                                    <TransactionGrid token={token} />
+                                // </RequireAuth>
                             } 
                         />
                     </Route>

@@ -3,7 +3,7 @@ import { AppBar, Button, Container, Toolbar, Box } from "@mui/material";
 import { Outlet, useNavigate } from "react-router-dom";
 import Logout from "./Auth/Logout";
 import { AuthContext } from "../context/AuthContext";
-const pages = ["Home", "Categorize"];
+const pages = ["Home", "Summary"];
 
 const NavBar = (props) => {
     const [authenticated] = useContext(AuthContext);
@@ -45,19 +45,6 @@ const NavBar = (props) => {
             <Outlet />
         </>
     )
-
-    // return (
-    //     <>
-    //         <Button variant="contained">
-    //             <NavLink to="/">Home</NavLink>
-    //         </Button>
-    //         <Button variant="contained">
-    //             <NavLink to="/categorize">Categorize</NavLink>
-    //         </Button>
-    //         {getAuthButton()}
-    //         <Outlet />
-    //     </>
-    // )
 }
 
 export default NavBar;
