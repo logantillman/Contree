@@ -43,9 +43,8 @@ const App = () => {
         <AuthContext.Provider value={[authenticated, setAuthenticated]}>
             <BrowserRouter>
                 <Routes>
-                    <Route path="/home" element={<Navigate to="/" />} />
+                    <Route path="/summary" element={<Navigate to="/" />} />
                     <Route path="/" element={<NavBar setToken={setToken} />}>
-                        <Route index element={<Home />} />
                         {/* TODO this plaid route probably shouldn't be a route... just a normal button */}
                         <Route 
                             path="plaid" 
@@ -57,7 +56,7 @@ const App = () => {
                         /> 
                         <Route path="login" element={<Login setToken={setToken} />} />
                         <Route 
-                            path="summary" 
+                            index
                             element={
                                 // <RequireAuth>
                                     <SummaryDetails token={token} />
