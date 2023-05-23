@@ -1,7 +1,7 @@
 import { useRef, useEffect, useCallback, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Home from './components/Home';
-import Plaid from './Plaid.tsx';
+import Plaid from './components/Plaid.tsx';
 import Login from './components/Auth/Login';
 import TransactionGrid from './components/TransactionGrid/TransactionGrid';
 import axios from 'axios';
@@ -39,12 +39,13 @@ const App = () => {
         return () => clearInterval(interval);
     }, [token, getAccessToken]);
 
+    // TODO use TanStackQuery and NextJS
     return (
         <AuthContext.Provider value={[authenticated, setAuthenticated]}>
             <BrowserRouter>
                 <Routes>
                     <Route path="/summary" element={<Navigate to="/" />} />
-                    <Route path="/" element={<NavBar setToken={setToken} />}>
+                    <Route path="/" element={<NavBar setToken={setToken} token={token} />}>
                         {/* TODO this plaid route probably shouldn't be a route... just a normal button */}
                         <Route 
                             path="plaid" 
